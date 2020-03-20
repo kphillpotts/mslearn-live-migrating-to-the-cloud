@@ -84,9 +84,16 @@ namespace RealEstate
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
 			// For uploading images to the servers file system (for single server systems only).
-			services.AddSingleton<IImageUpload>(new LocalFileImageUpload(
-				localImagePath: Path.Combine(_hostingEnv.WebRootPath, "assets"),
-				imageBaseUrl: "/assets/"));
+			//services.AddSingleton<IImageUpload>(new LocalFileImageUpload(
+			//	localImagePath: Path.Combine(_hostingEnv.WebRootPath, "assets"),
+			//	imageBaseUrl: "/assets/"));
+
+			services.AddSingleton<IImageUpload>(new AzureBlobStorageImageUpload(
+				Configuration.GetValue<String>("CloudStorageAccountName"),
+				Configuration.GetValue<String>("CloudStorageAccountKey"),
+				Configuration.GetValue<String>("CloudStorageBaseUrl"),
+				Configuration.GetValue<String>("CloudStorageBlobContainer")
+				));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
